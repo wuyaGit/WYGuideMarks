@@ -26,15 +26,16 @@ NSString *const kContinueLabelText = @"点击继续";
 @property (nonatomic, strong) UIButton *btnSkipCoach;
 @property (nonatomic, strong) UIButton *btnIKnow;
 
+@property (nonatomic, strong) UIView *cutoutView;            //镂空view
+@property (nonatomic, strong) UIImageView *arrowImageView;   //指示view
+@property (nonatomic, strong) CAShapeLayer *mask;
+
 @property (nonatomic) GMarksContinueBtnLocation continueLocation;
 @end
 
 @implementation WYGuideMarks {
-    CAShapeLayer *_mask;
     NSUInteger _markIndex;
     
-    UIView *_cutoutView;            //镂空view
-    UIImageView *_arrowImageView;   //指示view
 }
 
 #pragma mark - cycle life
@@ -71,10 +72,10 @@ NSString *const kContinueLabelText = @"点击继续";
     self.enableIKnowButton = YES;
     
     // mask
-    _mask = [CAShapeLayer layer];
-    [_mask setFillRule:kCAFillRuleEvenOdd];
-    [_mask setFillColor:[UIColor colorWithHue:0.0f saturation:0.0f brightness:0.0f alpha:kMaskAlpha].CGColor];
-    [self.layer addSublayer:_mask];
+    self.mask = [CAShapeLayer layer];
+    [self.mask setFillRule:kCAFillRuleEvenOdd];
+    [self.mask setFillColor:[UIColor colorWithHue:0.0f saturation:0.0f brightness:0.0f alpha:kMaskAlpha].CGColor];
+    [self.layer addSublayer:self.mask];
     
     // tap touch
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userTapEventAction:)];
@@ -220,49 +221,49 @@ NSString *const kContinueLabelText = @"点击继续";
         y = markRect.origin.y + kLblSpacing + markRect.size.height;
     }
     
-    [_arrowImageView removeFromSuperview];
+    [self.arrowImageView removeFromSuperview];
     if(showArrow) {
-        _arrowImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow_top"]];
-        [self addSubview:_arrowImageView];
+        self.arrowImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow_top"]];
+        [self addSubview:self.arrowImageView];
 
         if (markCenter.y >= centerY) {
-            y = markRect.origin.y - kLblSpacing - _arrowImageView.frame.size.height;
+            y = markRect.origin.y - kLblSpacing - self.arrowImageView.frame.size.height;
         }
         
-        CGRect imageViewFrame = _arrowImageView.frame;
+        CGRect imageViewFrame = self.arrowImageView.frame;
         imageViewFrame.origin.y = y;
-        _arrowImageView.frame = imageViewFrame;
+        self.arrowImageView.frame = imageViewFrame;
 
-        CGPoint imageViewCenter = _arrowImageView.center;
+        CGPoint imageViewCenter = self.arrowImageView.center;
         
         if (markCenter.x<=centerX && markCenter.y<=centerY) {
             imageViewCenter.x = CGRectGetMidX(markRect) + 10;
-            _arrowImageView.center = imageViewCenter;
+            self.arrowImageView.center = imageViewCenter;
 
-            _arrowImageView.image = [UIImage imageNamed:@"arrow_down"];
-            [_arrowImageView setTransform:CGAffineTransformRotate(CGAffineTransformIdentity, M_PI)];
+            self.arrowImageView.image = [UIImage imageNamed:@"arrow_down"];
+            [self.arrowImageView setTransform:CGAffineTransformRotate(CGAffineTransformIdentity, M_PI)];
         }else if (markCenter.x>=centerX && markCenter.y<=centerY) {
             imageViewCenter.x = CGRectGetMidX(markRect) - 10;
-            _arrowImageView.center = imageViewCenter;
+            self.arrowImageView.center = imageViewCenter;
             
-            _arrowImageView.image = [UIImage imageNamed:@"arrow_top"];
+            self.arrowImageView.image = [UIImage imageNamed:@"arrow_top"];
         }else if (markCenter.x<=centerX && markCenter.y>=centerY) {
             imageViewCenter.x = CGRectGetMidX(markRect) + 10;
-            _arrowImageView.center = imageViewCenter;
+            self.arrowImageView.center = imageViewCenter;
             
-            _arrowImageView.image = [UIImage imageNamed:@"arrow_top"];
-            [_arrowImageView setTransform:CGAffineTransformRotate(CGAffineTransformIdentity, M_PI)];
+            self.arrowImageView.image = [UIImage imageNamed:@"arrow_top"];
+            [self.arrowImageView setTransform:CGAffineTransformRotate(CGAffineTransformIdentity, M_PI)];
         }else if (markCenter.x>=centerX && markCenter.y>=centerY) {
             imageViewCenter.x = CGRectGetMidX(markRect) - 10;
-            _arrowImageView.center = imageViewCenter;
+            self.arrowImageView.center = imageViewCenter;
             
-            _arrowImageView.image = [UIImage imageNamed:@"arrow_down"];
+            self.arrowImageView.image = [UIImage imageNamed:@"arrow_down"];
         }
 
         if (markCenter.y >= centerY) {
             y -= (self.lblCaption.frame.size.height + 2 * kLabelMargin);
         }else {
-            y += (_arrowImageView.frame.size.height + 2 * kLabelMargin);
+            y += (self.arrowImageView.frame.size.height + 2 * kLabelMargin);
         }
     }
     
@@ -274,13 +275,13 @@ NSString *const kContinueLabelText = @"点击继续";
     
     // Delegate (guideMarksViewDidClicked:atIndex:)
     if (self.delegate && [self.delegate respondsToSelector:@selector(guideMarksViewDidClicked:atIndex:)]) {
-        [_cutoutView removeFromSuperview];
-        _cutoutView = [[UIView alloc] initWithFrame:markRect];
-        _cutoutView.backgroundColor = [UIColor clearColor];
-        [self addSubview:_cutoutView];
+        [self.cutoutView removeFromSuperview];
+        self.cutoutView = [[UIView alloc] initWithFrame:markRect];
+        self.cutoutView.backgroundColor = [UIColor clearColor];
+        [self addSubview:self.cutoutView];
         
         UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cutoutViewTapAction:)];
-        [_cutoutView addGestureRecognizer:singleFingerTap];
+        [self.cutoutView addGestureRecognizer:singleFingerTap];
     }
     
     // Delegate (guideMarksView:willNavigateToIndex:)
@@ -297,8 +298,8 @@ NSString *const kContinueLabelText = @"点击继续";
     [self animateCutoutToRect:markRect withShape:shape];
     
     // 显示'我知道'
-    [self.btnIKnow removeFromSuperview];
     if (self.enableIKnowButton) {
+        [self.btnIKnow removeFromSuperview];
         CGFloat x = CGRectGetMidX(self.lblCaption.frame) - 55.0f;
         CGFloat y = CGRectGetMaxY(self.lblCaption.frame) + kLblSpacing;
         if (markCenter.y >= centerY) {
@@ -397,7 +398,7 @@ NSString *const kContinueLabelText = @"点击继续";
     [maskPath appendPath:cutoutPath];
     
     // Set the new path
-    _mask.path = maskPath.CGPath;
+    self.mask.path = maskPath.CGPath;
 }
 
 - (void)animateCutoutToRect:(CGRect)rect withShape:(GMarksShape)shape {
@@ -419,10 +420,10 @@ NSString *const kContinueLabelText = @"点击继续";
     anim.delegate = self;
     anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     anim.duration = kAnimationDuration;
-    anim.fromValue = (__bridge id)(_mask.path);
+    anim.fromValue = (__bridge id)(self.mask.path);
     anim.toValue = (__bridge id)(maskPath.CGPath);
-    [_mask addAnimation:anim forKey:@"path"];
-    _mask.path = maskPath.CGPath;
+    [self.mask addAnimation:anim forKey:@"path"];
+    self.mask.path = maskPath.CGPath;
 }
 
 - (CGFloat)yOriginForContinueLabel {
@@ -475,7 +476,7 @@ NSString *const kContinueLabelText = @"点击继续";
 
 - (void)setMaskColor:(UIColor *)maskColor {
     _maskColor = maskColor;
-    [_mask setFillColor:[maskColor CGColor]];
+    [self.mask setFillColor:[maskColor CGColor]];
 }
 
 @end

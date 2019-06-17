@@ -32,7 +32,6 @@
                                 GUIDEMARKS_RECT: [NSValue valueWithCGRect:guidemark0],
                                 GUIDEMARKS_CAPTION: @"You can put marks over images \nYou can put marks over images \nYou can put marks over images",
                                 GUIDEMARKS_SHAPE: [NSNumber numberWithInteger:SHAPE_CIRCLE],
-                                GUIDEMARKS_LABELWIDTH : [NSNumber numberWithFloat:200],
                                 GUIDEMARKS_SHOWARROW:[NSNumber numberWithBool:YES]
                                 },
                             @{
@@ -44,6 +43,7 @@
                             @{
                                 GUIDEMARKS_RECT: [NSValue valueWithCGRect:guidemark2],
                                 GUIDEMARKS_CAPTION: @"Also, we can show buttons",
+                                GUIDEMARKS_LABELWIDTH : [NSNumber numberWithFloat:250],
                                 GUIDEMARKS_SHOWARROW:[NSNumber numberWithBool:YES]
                                 },
                             @{
