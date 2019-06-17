@@ -2,8 +2,7 @@
 新手引导view
 
 #### 截图
-<img src="https://github.com/wuyaGit/WYGuideMarks/blob/master/WeChat7dc30f497a928808f3e9408141ae5aeb.png" width = 50% height = 50% />
-
+<img src="https://github.com/wuyaGit/WYGuideMarks/blob/master/WeChat7dc30f497a928808f3e9408141ae5aeb.png" width = 50% height = 50% /> 
 <img src="https://github.com/wuyaGit/WYGuideMarks/blob/master/WeChatf3edc3933710f87fab790eb07491afdc.png" width = 50% height = 50% />
 
 ## 特点：
